@@ -1,0 +1,158 @@
+---
+title: 'CIND 123 - Data Analytics: Basic Methods'
+author: 'Ajay Herod'
+output:
+  pdf_document: default
+---
+<center> <h1> Assignment 2 (10%) </h1> </center>
+<center>  <h3> Ajay Herod </h2> </center>
+<center> <h3> D10 500764104 </h2> </center>
+---
+## Instructions 
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. Review this website for more details on using R Markdown <http://rmarkdown.rstudio.com>.
+
+Use RStudio for this assignment. Complete the assignment by inserting your R code wherever you see the string "#INSERT YOUR ANSWER HERE".
+
+When you click the **Knit** button, a document (PDF, Word, or HTML format) will be generated that includes both the assignment content as well as the output of any embedded R code chunks.
+
+Submit **both**  the rmd and generated output files. Failing to submit both files will be subject to mark deduction.
+
+
+## Sample Question and Solution
+
+Use `seq()` to create the vector $(1,2,3,\ldots,20)$.
+
+```{r}
+seq(1,20)
+```
+
+******
+\newpage
+## Question 1 
+
+The Titanic Passenger Survival DataSet provides information on the fate of passengers on the fatal maiden voyage of the ocean liner "Titanic." The dataset is available from the Department of Biostatistics at the Vanderbilt University School of Medicine (http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/titanic3.csv)in several formats. store the Titanic DataSet `titanic_train` using the following commands. 
+```{r}
+library(titanic)
+titanicDataset <- read.csv(file = "http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/titanic3.csv", stringsAsFactors = F)
+summary(titanicDataset)
+```
+
+a) Extract the columns `sex`, `age`, `cabin` and `survived` into a new data frame of the name 'titanicSubset'.
+
+```{r}
+titanicSubset <- titanicDataset[,c(4,5,10,2)]
+```
+
+
+b) Use the aggregate() function to display the total number of survivors grouped by `sex`
+
+```{r}
+aggregate(titanicSubset[4], by=list(titanicSubset$sex), FUN=sum)
+```
+
+c) Use the count() function in `dplyr` package to display the total number of passengers within each Ticket Class `Pclass.`
+
+```{r}
+count(titanicDataset, pclass)
+```
+
+d) Answer the following graphically:
+1. What was the survival rates for females and males?
+2. What was the age distribution on the Titanic?
+```{r}
+ggplot(titanicDataset) + geom_bar(aes(sex, fill = survived), position = "fill")
+ggplot(titanicDataset) + geom_histogram(aes(x = age), bins = 35)
+```
+
+e)Use the `for` loop and `if` control statements to list the children's names, aged 14 or under, on the Titanic.
+```{r}
+for (i in 1:length(titanicDataset$age)) {
+  if (titanicDataset$age[i] <= 14 && !is.na(titanicDataset$age[i])) {
+    print(titanicDataset$name[i])
+  }
+}
+```
+
+
+******
+\newpage
+## Question 2
+
+In an experiment of rolling 10 dice simultaneously. Use the binomial distribution to calculate the followings:
+
+a) The probability of getting six 6's
+```{r}
+dbinom(x = 6, size = 10, prob = 1/6)
+```
+
+b) The probability of getting six, seven, or eight 3's
+```{r}
+sum(dbinom(x = 6:8, size = 10, prob = 1/6))
+```
+
+c) The probability of getting six even numbers
+```{r}
+dbinom(x = 6, size = 10, prob = 1/2)
+```
+
+
+******
+\newpage
+## Question 3 
+
+In a shipment of 20 engines, history shows that the probability of any one engine proving unsatisfactory is 0.1
+
+a) Use the Binomial approximation to calculate the probability that at least three engines are defective? 
+```{r}
+BinomialA <- sum(dbinom(x = 3:20, size = 20, prob = 0.1))
+BinomialA
+```
+
+
+b) Use the Poisson approximation to calculate the probability that at least three engines are defective? 
+```{r}
+PoissonA <- ppois(3, lambda = 2, lower = FALSE)
+PoissonA
+```
+
+
+c) Compare the results of parts a and b, then illustrate graphically on how well the Poisson probability distribution approximates the Binomial probability distribution.
+```{r}
+distribution <- c(BinomialA, PoissonA)
+barplot(distribution, main = "Probability Distribution Approximates", xlab = "Binomial vs Poisson")
+```
+
+
+
+******
+\newpage
+## Question 4 
+
+Write a script in R to compute the following probabilities of a normal random variable with mean 16 and variance 9
+
+a) lies between 14.4 and 20.3 (inclusive)
+```{r}
+pnorm(20.3, 16, sd = 3) - pnorm(14.4, 16, sd = 3)
+```
+
+
+b) is greater than 21.8
+```{r}
+1 - pnorm(21.8, 16, sd = 3)
+```
+
+
+c) is less or equal to 10.5
+```{r}
+pnorm(10.5, 16, sd = 3)
+```
+
+
+d) is less than 13 or greater than 19
+```{r}
+pnorm(13, 16, sd = 3) + 1 - pnorm(19, 16, 3)
+```
+
+******
+END of Assignment #2.
